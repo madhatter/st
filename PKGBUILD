@@ -23,9 +23,16 @@ _patches=(01-st-alpha-20240814-a0274bc.diff
 source=("https://dl.suckless.org/st/st-${pkgver}.tar.gz"
         "config.h"
         ${_patches[@]})
-sha256sums=('SKIP' 'SKIP'
-            'SKIP' 'SKIP' 'SKIP' 'SKIP'
-            'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('9ed9feabcded713d4ded38c8cebf36a3b08f0042ef7934a0e2b2409da56e649b'
+            'd1d32e7c970f4389f8756f202e98c7d6c44d7a5b157a0a276c62f0373ff1fbb7'
+            '562f6a4baedeb89c8b6dfb2c2f14a69f9327fa8b71a5093e70219e39794b8d42'
+            '8db63bf83df06cba12cdb02e578cb49afc789c726b4c85f66e95b372562bac7a'
+            '13a37703d6ccd7c869a2c9a69316cea27678424c936265ae86c46681c3905128'
+            '5e1e57e12821c022807b33b4a950f1724bc2efeebd44323c3941f0bd652e1a19'
+            '952643c594be48174723b1905f5d80492897bdf4d7ac7001a0d525af4adf50e8'
+            '2ea18a883a7f2ee925b8b04b8bef97e3c1be62d6d31367574467570768a7a4f1'
+            '3525f9e66ede63eee8961eba8fe02cfc0d7e32c233309ae32aefc1a760484ee9'
+            'fc44d585d48cf1dfb00fb30c4e2c4cf9198b77f55a91f68ef7be26a5c75704a8')
 
 prepare() {
     cd "st-${pkgver}"
