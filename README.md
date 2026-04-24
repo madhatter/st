@@ -16,6 +16,7 @@ Personal build of [st](https://st.suckless.org) (simple terminal) v0.9.3.
 | 07 | [boxdraw](https://st.suckless.org/patches/boxdraw/) | 0.8.5 | Crisp box-drawing characters; modified for HarfBuzz compatibility |
 | 08 | [xresources](https://st.suckless.org/patches/xresources/) | 20230320 | Runtime config via Xresources |
 | 09 | sync (custom) | 0.9.3 | DEC private mode 2026 (Synchronized Output) for Neovim; built from scratch for this stack |
+| 10 | [csi_22_23](https://st.suckless.org/patches/csi_22_23/) | 0.8.5 | Title stack (CSI 22/23): push/pop window title for programs like Neovim; modified for 0.9.3 stack |
 
 > Note: patch 02b is a minor fix related to patch 02, and is not a separate patch from the original scrollback patch. 
 It is of no use without patch 02 and is seperate to keep the original scrollback patch intact for reference.

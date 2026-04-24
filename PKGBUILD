@@ -2,7 +2,7 @@
 
 pkgname=st-custom
 pkgver=0.9.3
-pkgrel=3
+pkgrel=4
 pkgdesc="A custom build of the simple terminal"
 arch=('x86_64')
 url="https://st.suckless.org"
@@ -20,7 +20,8 @@ _patches=(01-st-alpha-20240814-a0274bc.diff
           06-st-font2-0.8.5.diff
           07-st-boxdraw_v2-0.8.5-modified.diff
           08-st-xresources-20230320-45a15676.diff
-          09-st-sync-0.9.3-modified.diff)
+          09-st-sync-0.9.3-modified.diff
+          10-st-csi_22_23-0.8.5-modified.diff)
 
 source=("https://dl.suckless.org/st/st-${pkgver}.tar.gz"
         "config.h"
@@ -36,7 +37,8 @@ sha256sums=('9ed9feabcded713d4ded38c8cebf36a3b08f0042ef7934a0e2b2409da56e649b'
             '2ea18a883a7f2ee925b8b04b8bef97e3c1be62d6d31367574467570768a7a4f1'
             '3525f9e66ede63eee8961eba8fe02cfc0d7e32c233309ae32aefc1a760484ee9'
             'fc44d585d48cf1dfb00fb30c4e2c4cf9198b77f55a91f68ef7be26a5c75704a8'
-            '495f9030cf8eb5970b98fd796b331f11dcb4c72080e1951261aa667e95c9d9cf')
+            '495f9030cf8eb5970b98fd796b331f11dcb4c72080e1951261aa667e95c9d9cf'
+            'a9da60be9de0c2324c0980a6921fedad0e7a05e6acceaaa66818368a1f54594f')
 
 prepare() {
     cd "st-${pkgver}"
