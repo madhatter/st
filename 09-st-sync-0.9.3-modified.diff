@@ -1,0 +1,121 @@
+--- a/st.c
++++ b/st.c
+@@ -16,6 +16,7 @@
+ #include <termios.h>
+ #include <unistd.h>
+ #include <wchar.h>
++#include <time.h>
+ 
+ #include "st.h"
+ #include "win.h"
+@@ -227,11 +228,31 @@
+ static int cmdfd;
+ static pid_t pid;
+ 
++static int su = 0;
++static struct timespec sutv;
++
+ static const uchar utfbyte[UTF_SIZ + 1] = {0x80,    0, 0xC0, 0xE0, 0xF0};
+ static const uchar utfmask[UTF_SIZ + 1] = {0xC0, 0x80, 0xE0, 0xF0, 0xF8};
+ static const Rune utfmin[UTF_SIZ + 1] = {       0,    0,  0x80,  0x800,  0x10000};
+ static const Rune utfmax[UTF_SIZ + 1] = {0x10FFFF, 0x7F, 0x7FF, 0xFFFF, 0x10FFFF};
+ 
++static void tsync_begin() {
++	clock_gettime(CLOCK_MONOTONIC, &sutv);
++	su = 1;
++}
++
++static void tsync_end() {
++	su = 0;
++}
++
++int tinsync(uint timeout) {
++	struct timespec now;
++	if (su && !clock_gettime(CLOCK_MONOTONIC, &now)
++			&& TIMEDIFF(now, sutv) >= timeout)
++		su = 0; /* timeout expired, end sync */
++	return su;
++}
++
+ ssize_t
+ xwrite(int fd, const char *s, size_t len)
+ {
+@@ -990,6 +1011,7 @@
+ void
+ tfulldirt(void)
+ {
++	tsync_end();
+ 	tsetdirt(0, term.row-1);
+ }
+ 
+@@ -1560,6 +1582,12 @@
+ 			case 2004: /* 2004: bracketed paste mode */
+ 				xsetmode(set, MODE_BRCKTPASTE);
+ 				break;
++			case 2026: /* 2026: Synchronized rendering */
++				if (set)
++					tsync_begin();
++				else
++					tsync_end();
++				break;
+ 			/* Not implemented mouse modes. See comments there. */
+ 			case 1001: /* mouse highlight mode; can hang the
+ 				      terminal by design when implemented. */
+@@ -1813,6 +1841,23 @@
+ 			tcursor(CURSOR_LOAD);
+ 		}
+ 		break;
++	case '$':
++		switch (csiescseq.mode[1]) {
++		case 'p': /* DECRQM -- Request DEC private mode set/reset state */
++			if (!csiescseq.priv)
++				goto unknown;
++			switch (csiescseq.arg[0]) {
++			case 2026: /* Synchronized rendering */
++				ttywrite(su ? "\033[?2026;1$y" : "\033[?2026;2$y", 12, 0);
++				break;
++			default:
++				goto unknown;
++			}
++			break;
++		default:
++			goto unknown;
++		}
++		break;
+ 	case ' ':
+ 		switch (csiescseq.mode[1]) {
+ 		case 'q': /* DECSCUSR -- Set Cursor Style */
+--- a/x.c
++++ b/x.c
+@@ -2003,6 +2003,11 @@
+ 				continue;  /* we have time, try to find idle */
+ 		}
+ 
++		if (tinsync(su_timeout)) {
++			timeout = minlatency;
++			continue;
++		}
++
+ 		/* idle detected or maxlatency exhausted -> draw */
+ 		timeout = -1;
+ 		if (blinktimeout && tattrset(ATTR_BLINK)) {
+--- a/st.h
++++ b/st.h
+@@ -124,4 +124,7 @@
+ extern unsigned int defaultfg;
+ extern unsigned int defaultbg;
+ extern unsigned int defaultcs;
+ extern const int boxdraw, boxdraw_bold, boxdraw_braille;
++
++/* synchronized rendering */
++int tinsync(uint);
+--- a/config.def.h
++++ b/config.def.h
+@@ -55,6 +55,7 @@
+  */
+ static double minlatency = 2;
+ static double maxlatency = 33;
++static uint su_timeout = 200;
+ 
+ /*
+  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
