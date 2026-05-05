@@ -1,0 +1,81 @@
+--- a/st.c
++++ b/st.c
+@@ -1127,6 +1127,50 @@ kscrollup(const Arg* a)
+ }
+
+ void
++kscrollup_sel(const Arg* a)
++{
++	int n = a->i;
++
++	if (n < 0)
++		n = term.row + n;
++
++	if (term.scr <= HISTSIZE-n) {
++		term.scr += n;
++		if (sel.ob.x != -1) {
++			sel.ob.y += n;
++			sel.oe.y += n;
++			selnormalize();
++		}
++		tfulldirt();
++	}
++}
++
++void
++kscrolldown_sel(const Arg* a)
++{
++	int n = a->i;
++
++	if (n < 0)
++		n = term.row + n;
++
++	if (n > term.scr)
++		n = term.scr;
++
++	if (term.scr > 0) {
++		term.scr -= n;
++		if (sel.ob.x != -1) {
++			sel.ob.y -= n;
++			sel.oe.y -= n;
++			if (sel.ob.y < 0 || sel.oe.y < 0)
++				selclear();
++			else
++				selnormalize();
++		}
++		tfulldirt();
++	}
++}
++
++void
+ tscrolldown(int orig, int n, int copyhist)
+ {
+ 	int i;
+--- a/st.h
++++ b/st.h
+@@ -85,6 +85,8 @@
+
+ void kscrolldown(const Arg *);
+ void kscrollup(const Arg *);
++void kscrollup_sel(const Arg *);
++void kscrolldown_sel(const Arg *);
+ void externalpipe(const Arg *);
+ void printscreen(const Arg *);
+ void printsel(const Arg *);
+--- a/x.c
++++ b/x.c
+@@ -746,6 +746,15 @@ bmotion(XEvent *e)
+ 		return;
+ 	}
+
++	if (e->xbutton.state & Button1Mask) {
++		int y = e->xbutton.y - borderpx;
++		Arg a = {.i = 1};
++		if (y < win.ch)
++			kscrollup_sel(&a);
++		else if (y > win.th - win.ch)
++			kscrolldown_sel(&a);
++	}
++
+ 	mousesel(e, 0);
+ }
