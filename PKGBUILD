@@ -2,7 +2,7 @@
 
 pkgname=st-custom
 pkgver=0.9.3
-pkgrel=5
+pkgrel=6
 pkgdesc="A custom build of the simple terminal"
 arch=('x86_64')
 url="https://st.suckless.org"
@@ -22,13 +22,14 @@ _patches=(01-st-alpha-20240814-a0274bc.diff
           08-st-xresources-20230320-45a15676.diff
           09-st-sync-0.9.3-modified.diff
           10-st-csi_22_23-0.8.5-modified.diff
-          11-st-scrollback-edge-scroll.diff)
+          11-st-scrollback-edge-scroll.diff
+          12-st-clickurl-0.8.5-modified.diff)
 
 source=("https://dl.suckless.org/st/st-${pkgver}.tar.gz"
         "config.h"
         ${_patches[@]})
 sha256sums=('9ed9feabcded713d4ded38c8cebf36a3b08f0042ef7934a0e2b2409da56e649b'
-            '097e1c002c485d20850c70deed2a9dc72eb8a45590e34d1e0cd1b3593981551e'
+            '0496d6145e30c874d2122f0723eb19c635068142b3ea502c882a021c44f890ef'
             '562f6a4baedeb89c8b6dfb2c2f14a69f9327fa8b71a5093e70219e39794b8d42'
             '8db63bf83df06cba12cdb02e578cb49afc789c726b4c85f66e95b372562bac7a'
             '411b027ee0140a93781d4ecef93e86766f283e07995f8f5332f2d364a90696df'
@@ -40,7 +41,8 @@ sha256sums=('9ed9feabcded713d4ded38c8cebf36a3b08f0042ef7934a0e2b2409da56e649b'
             'fc44d585d48cf1dfb00fb30c4e2c4cf9198b77f55a91f68ef7be26a5c75704a8'
             '495f9030cf8eb5970b98fd796b331f11dcb4c72080e1951261aa667e95c9d9cf'
             'a9da60be9de0c2324c0980a6921fedad0e7a05e6acceaaa66818368a1f54594f'
-            'd9c149c1366510ba08fc6681bfefa6f68f15a761875f17cbd40d2ef0a635969f')
+            'd9c149c1366510ba08fc6681bfefa6f68f15a761875f17cbd40d2ef0a635969f'
+            'a3ae5bacb3a5e93b91082f16566e55f31929b191c27e3b8b35aa7a89d6161c86')
 
 prepare() {
     cd "st-${pkgver}"
